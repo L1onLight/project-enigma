@@ -14,7 +14,7 @@ DJANGO_DEBUG=True
 ```
 
 These variables are optional, but EMAIL_SYSTEM_EMAIL and EMAIL_SYSTEM_PASSWORD is required for password restore
-functionality.
+functionality. Email system should work only for GMail with created password for specific app.
 
 ### Install python requirements:
 
