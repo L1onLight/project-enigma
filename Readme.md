@@ -27,3 +27,30 @@ And finally, run the server.
 ```shell
 python manage.py runserver
 ```
+
+## Example images:
+
+#### Main page
+
+![Sample Image](./Images/main_page.png)
+
+#### Create Post page
+
+![Sample Image](./Images/add_post.png)
+
+#### Post page
+
+![Sample Image](./Images/added_post.png)
+
+#### Login page
+
+![Sample Image](./Images/login_page.png)
+
+#### Mini profile
+
+![Sample Image](./Images/mini_profile.png)
+
+#### Profile page
+
+![Sample Image](./Images/profile_page.png)
+
