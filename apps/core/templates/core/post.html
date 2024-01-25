@@ -1,0 +1,153 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+    <section class="py-1">
+        <div class="container py-2 mx-auto">
+            <img class="rounded img-fluid shadow w-100 fit-cover"
+                 src="{{ post.postImage.url }}"
+                 style="height: 500px;">
+            <div class="row  mx-auto py-2" style="max-width: 900px;">
+                <div class="py-2">
+                    <div class="text-center">
+                        {% for tag in post.tagList.all %}
+                            <a href="{% url 'search' %}?tags={{ tag }}" class=""><span class="badge tag mx-1 my-1">{{ tag }}</span></a>
+                        {% endfor %}
+                    </div>
+                    <h4 class="fw-bold" style="margin-bottom: 5px">{{ post.title }}</h4>
+                    <p class="text-muted">{{ post.body }}</p>
+                    <div class="d-flex justify-content-between ">
+                            <p class="user-field"><text class="pointer-my" onclick="fetch_id({{ post.author.id }})">{{ post.author }}</text></p>
+                        <!-- Post Rating -->
+                            <div class="d-flex justify-content-between">
+
+                                <div class="text-start me-3">
+                                    <small>Rating: </small>
+                                </div>
+                                <div class="text-end">
+
+                                    <i onclick="like_post(this, {{post.id}}, 'like', 'post')"
+                                        class="fa-solid fa-thumbs-up pointer-my {% if request.user in post.likes.all %}ratingG-1{% endif %}" ></i>
+                                    <small id="post-{{post.id}}" style="font-size: 12px"
+                                           class="{% if post.total_likes > 0 %}ratingG-1{% elif post.total_likes == 0 %}{% else %}ratingR-1{% endif %} mx-1">{{ post.total_likes }}</small>
+                                    <i onclick="like_post(this, {{post.id}}, 'dislike', 'post')"
+                                        class="fa-solid fa-thumbs-down pointer-my {% if request.user in post.dislikes.all %}ratingR-1{% endif %}" ></i>
+                                    
+                                </div>
+                            </div>
+                        <!-- Post Rating End -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="mx-auto comment-main comment-section" style="max-width: 750px;">
+        {% if request.user.is_authenticated %}
+            <div class="mb-3 mx-auto ">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <label for="commentForm" class="form-label">Write your comment here!</label>
+                    <textarea class="form-control shadow" id="commentForm" rows="3" name="messageBody"></textarea>
+                    <button type="submit" class="btn shadow w-100 mt-2"
+                            style="border-radius: 10px;background-color: #0A91AB; color: wheat">Send
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+        <!-- Comment Section -->
+        <div class="mb-3 mx-auto">
+            <div class="">
+                {% for comment in comments %}
+                <!-- Unique comments -->
+                    <div class="comment card mb-4 position-relative" id="comment-card-{{comment.id}}">
+                        {% if comment.commentAuthor == request.user %}
+                        <div class='comment-delete shadow' onclick="deleteComPost('comment', {{comment.id}})"><i class=" fa-solid fa-xmark"></i></div>
+                        {% endif %}
+                        <div class="comment-content card-body shadow">
+                            <div class="d-flex justify-content-between m-2">
+                                <div class="ms-2 me-4 my-auto">
+                                <text class="pointer-my" onclick="fetch_id({{ comment.commentAuthor.id }})">
+                                    <img src="{{ comment.commentAuthor.avatar.url }}"
+                                         alt="User Avatar" class="rounded-circle me-3" width="50" height="50">
+                                         </text>
+                                         <text onclick="fetch_id({{ comment.commentAuthor.id }})" class="pointer-my">
+                                    <span class="align-top">{{ comment.commentAuthor.un }}</span></text>
+                                </div>
+
+                                <span class="text-end align-top me-2">{{ comment.created }}</span>
+                            </div>
+                            <div class="d-flex mt-4">
+
+                                <p class="card-text  ms-1 me-1">{{ comment.commentBody }}</p>
+                            </div>
+                            <div class="text-end">
+                                <i onclick="like_post(this, {{comment.id}}, 'like', 'comment')"
+                                class="fas fa-thumbs-up mx-2 pointer-my {% if request.user in comment.likes.all %}ratingG-1{% endif %}" ></i>
+                            <small id="comment-{{comment.id}}" style="font-size: 12px"
+                                   class="{% if comment.total_likes > 0 %}ratingG-1{% elif comment.total_likes == 0 %}{% else %}ratingR-1{% endif %} mx-1">{{ comment.total_likes }}</small>
+                            <i onclick="like_post(this, {{comment.id}}, 'dislike', 'comment')"
+                                class="fas fa-thumbs-down mx-2 pointer-my {% if request.user in comment.dislikes.all %}ratingR-1{% endif %}" ></i>
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                {% endfor %}
+
+
+            </div>
+
+
+        </div>
+
+    </section>
+    <!-- Pagination if comments.count more than pn-->
+    {% if paginator.count > pn %}
+        <div class="text-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+
+
+                    {% if comments.has_previous %}
+                        <li class="page-item"><a class="page-link mainBlue-text"
+                                                 href="?page=1{% if sort %}&sortby={{ sort }}{% endif %}"
+                                                 tabindex="-1">&laquo; First</a></li>
+                        <li class="page-item"><a class="page-link mainBlue-text"
+                                                 href="?page={{ comments.previous_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}">{{ comments.previous_page_number }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link"
+                                                          href=""
+                                                          tabindex="-1"
+                                                          aria-disabled="true">&laquo; First</a></li>
+                    {% endif %}
+                    <li class="page-item">
+                        <a class="page-link my-active" style="color: wheat;" href="?page={{ comments.number }}{% if sort %}&sortby={{ sort }}{% endif %}">{{ comments.number }}</a>
+                    </li>
+
+                    {% if comments.has_next %}
+                        <li class="page-item">
+                            <a class="page-link mainBlue-text"
+                               href="?page={{ comments.next_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}">
+                                {{ comments.next_page_number }}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link mainBlue-text"
+                               href="?page={{ paginator.num_pages }}{% if sort %}&sortby={{ sort }}{% endif %}">Last
+                                &raquo;</a>
+                        </li>
+
+
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link mainBlue-text" aria-disabled="true" href="">Last &raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+{% endblock %}

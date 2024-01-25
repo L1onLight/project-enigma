@@ -1,0 +1,276 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+    <div style="position: relative;" class="mx-auto">
+
+        <section class="py-1">
+            <div class="container py-2 mx-auto">
+                <div class="d-grid gap-2">
+                    <button type="button" name="" id="searchDropdown" onclick="hide()" class="main-search-btn mb-0"><i
+                            class="fa-solid fa-bars fa-lg"></i></button>
+                </div>
+                <form action="" id="mainForm">
+                    <div class="mx-2 mb-2 main-search shadow mainForm closed" style="max-width: 900px; display: none;">
+
+
+                        <div class="pt-2">
+                            <div class='m-3 mt-1'>
+                                <button class="dropdown-toggle pt-1 px-3 w-100"
+                                        style="border: none; border-radius: 20px"
+                                        aria-expanded="false" data-bs-toggle="dropdown" type="button">Sort By
+                                </button>
+                                <div class="dropdown-menu p-3">
+                                    <label><input type="radio" class="" id='nw' name='sortby' value="-created"
+                                                  onclick="radioClick(this)">
+                                        Newest First</label><br>
+                                    <label><input type="radio" class="" id='nw' name='sortby' value="created"
+                                                  onclick="radioClick(this)">
+                                        Oldest First</label><br>
+                                    <label><input type="radio" class="" id='nw' name='sortby' value="-rating"
+                                                  onclick="radioClick(this)">
+                                        Highest Rating First</label><br>
+                                    <label><input type="radio" class="" id='nw' name='sortby' value="rating"
+                                                  onclick="radioClick(this)">
+                                        Lowest Rating First</label>
+
+                                </div>
+                            </div>
+                            <div class="row second-col mx-3 ">
+                                <label for="q" class="mb-0 pb-0">Search by Name, Body or Author</label>
+                                <div class="position-relative ps-0 pe-0">
+                                    <input id="q" type="text" name="q" class="profile-input mt-1">
+                                </div>
+                            </div>
+                            <div class="row second-col mx-3 ">
+                                <label for="tags" class="mb-0 pb-0">Search by Tags</label>
+                                <div class="position-relative ps-0 pe-0 d-flex">
+                                    <input id="postTags2" type="text" maxlength="15" class="profile-input mt-1 w-75">
+                                    <input type="hidden" name="tags"/>
+                                    <button class='main-search-btn search-active tempus mt-auto w-25 ms-2'
+                                            id="addTagButton2">Add
+                                    </button>
+                                    <div class="errorMessage"></div>
+                                </div>
+                                <text id="errorMessage" class="error-message"></text>
+                                <div class="text-center">
+                                    <div class="mb-2 mt-1" id="tagContainer2"></div>
+                                </div>
+                                <button class="s-btn tempus search-active" type="submit">Search</button>
+                            </div>
+                        </div>
+
+                        <!--  -->
+                    </div>
+                </form>
+            </div>
+        </section>
+        <section class="py-1">
+            <div class="container py-2 mx-auto">
+
+                <div class="d-flex justify-content-between mx-auto px-2 align-items-center" style="max-width: 900px;">
+                    {#<div class="my-auto"><a class="px-1" href="#">Blogs</a></div>#}
+
+                    <p class="px-1 my-auto">Total found: {{paginator.count}}</p>
+                    
+                </div>
+                <div class="row row-cols-1 row-cols-md-2 mx-auto py-2" style="max-width: 900px;">
+                    {% for post in posts %}
+                        <div class="col mb-4">
+
+                            <div>
+                                <a href="{% url 'post' pk=post.id %}"><img
+                                        class="rounded img-fluid shadow w-100 fit-cover"
+                                        src="{{ post.postImage.url }}" style="height: 250px;"></a>
+
+                                <div class="py-2">
+                                    <div class="text-center">
+                                        {% for tag in post.tagList.all %}
+                                            <a href="{% url 'search' %}?tags={{ tag }}" class=""><span
+                                                    class="badge tag mx-1 my-1">{{ tag }}</span></a>
+                                        {% endfor %}
+                                    </div>
+
+                                    <a href="{% url 'post' pk=post.id %}">
+                                        <h4 class="fw-bold" style="margin-bottom: 5px">{{ post.title }}</h4>
+                                    </a>
+
+                                    <p class="text-muted post-body">
+                                        {{ post.body }}</p>
+                                    <div class="d-flex">
+                                        <div class="col-9 text-start">
+                                            <text class="pointer-my"
+                                                  onclick="fetch_id({{ post.author.id }})">{{ post.author.un }}</text>
+
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="d-flex">
+                                                <div class="col-7 text-start">
+                                                    <small class="">Rating: </small>
+                                                </div>
+                                                <div class="col-5 text-center">
+                                                    {#<small style="font-size: 12px">{{ post.total_likes }}</small>#}
+                                                    <small style="font-size: 12px" class="{% if post.total_likes > 0 %}ratingG
+                                                        {% elif post.total_likes == 0 %}
+                                                        {% else %}ratingR{% endif %} ">{{ post.total_likes }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if paginator.count > pn %}
+                    <div class="text-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+
+
+                                {% if posts.has_previous %}
+                                    <li class="page-item"><a class="page-link mainBlue-text"
+                                                             href="?page=1{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}"
+                                                             tabindex="-1">&laquo; First</a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link mainBlue-text"
+                                                             href="?page={{ posts.previous_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">
+                                        {{ posts.previous_page_number }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link" href="" tabindex="-1"
+                                                                      aria-disabled="true">&laquo; First</a></li>
+                                {% endif %}
+                                <li class="page-item">
+                                    <a class="page-link my-active" style="color: wheat;"
+                                       href="?page={{ posts.number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">{{ posts.number }}</a>
+                                </li>
+
+                                {% if posts.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link mainBlue-text" href="?page={{ posts.next_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">
+                                            {{ posts.next_page_number }}</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link mainBlue-text"
+                                           href="?page={{ paginator.num_pages }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">Last
+                                            &raquo;</a>
+                                    </li>
+
+
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link mainBlue-text" aria-disabled="true" href="">Last &raquo;</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+    </div>
+    <script>
+        var mainFormDiv = document.querySelector('.mainForm')
+
+        function hide() {
+	    mainFormDiv.classList.toggle('closed');
+	    if (mainFormDiv.style.display === 'none') {
+            mainFormDiv.style.display = 'block'
+          } else {
+            setTimeout(function() {
+                mainFormDiv.style.display = 'none';
+              }, 210);
+          }
+    }
+    </script>
+    <script>
+        var check1, check2;
+
+        function radioClick(c) {
+            if (check1 != c) {
+                check2 = 0;
+                check1 = c
+            }
+            check2 ^= 1;
+            c.checked = check2
+        }
+    </script>
+
+    <script>
+        // Get the necessary elements
+        const input = document.getElementById('postTags2');
+        const addButton = document.getElementById('addTagButton2');
+        const tagContainer = document.getElementById('tagContainer2');
+        const tagList = document.getElementById('tagList');
+        const form = document.getElementById('mainForm');
+        let errorMessage = document.getElementById('errorMessage');
+        let tagCount = 0
+        let tagListMy = []
+
+        function createTag(value) {
+            mainFormDiv.classList.add('added-tag')
+            if (tagContainer.childElementCount >= 4) {
+                errorMessage.textContent = "You can't add more than 4 tags";
+                return;
+            }
+            if (tagContainer.childElementCount < 4) {
+
+                const tag = document.createElement('span');
+                value = value.charAt(0).toUpperCase() + value.slice(1)
+                if (value.includes('|')) {
+                    errorMessage.textContent = "Tag should not contain ' | ' symbol";
+                    return;
+                }
+                if (tagListMy.includes(value)) {
+                    errorMessage.textContent = 'Tag already exists';
+                    return;
+                }
+
+                tag.className = 'search-tag tag mx-1';
+                tag.innerHTML = `${value}  <i class="fa-solid fa-xmark"></i>`;
+                tag.addEventListener('click', () => {
+                    tagContainer.removeChild(tag);
+                    tagListMy.splice(tagListMy.indexOf(tag), 1)
+                    if (tagContainer.childElementCount === 0) {
+                        mainFormDiv.classList.remove('added-tag')
+                    }
+
+                    updateFormValues();
+                });
+
+                tagCount += 1
+                errorMessage.textContent = '';
+
+
+                tagListMy.push(value)
+                return tag;
+
+            } else {
+
+            }
+        }
+
+        function handleAddTag(event) {
+            event.preventDefault();
+
+            const value = input.value.trim();
+            if (value !== '') {
+                const tag = createTag(value);
+                tagContainer.appendChild(tag);
+                updateFormValues();
+                input.value = '';
+            }
+        }
+
+        function updateFormValues() {
+            const tags = tagContainer.getElementsByClassName('search-tag');
+            const tagValues = Array.from(tags).map((tag) => tag.textContent.trim());
+            form.querySelector('[name="tags"]').value = tagValues.join('|');
+        }
+
+        addButton.addEventListener('click', handleAddTag);
+
+    </script>{% endblock %}

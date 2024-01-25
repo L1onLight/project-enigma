@@ -1,0 +1,136 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+    <div class="py-3 my-auto mx-3">
+        <section id="fullScreenProfile" class="container py-2 mx-auto profile-card-main shadow"
+                 style="max-width: 800px">
+            <div class="header-main main-col">
+                <img src="{{ user.avatar.url }}" class="img-fluid mb-3 unselectable" alt="">
+                <br>
+                <div class="d-flex">
+
+                    <div class="mx-auto">
+                        {% if user.inst_url %}
+                            <a href="{{ user.inst_url }}" target="_blank"><i
+                                class="fa-brands fa-instagram fa-xl p-2 pb-4 link-card-icons"
+                                style="color: #df437e"></i>
+                        {% endif %}
+                        {% if user.steam_url %}
+                            </a><a href="{{ user.steam_url }}" target="_blank"><i
+                                class="fa-brands fa-steam fa-xl p-2 pb-4 link-card-icons"
+                                style="color: #171a21"></i></a>
+                        {% endif %}
+
+                        {% if user.telegram_url %}
+                            <a href="{{ user.telegram_url }}" target="_blank"><i
+                                    class="fa-brands fa-telegram fa-xl p-2 pb-4 link-card-icons"
+                                    style="color: #229ED9;"></i></a>
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% if user == request.user %}
+                    <button onclick="location.href='{% url 'edit_profile' %}'" class="profile-btn mt-2">Edit</button>
+                {% endif %}
+            </div>
+            <div class="row ps-3 pe-3 second-col mx-3">
+                <div class="profile-title-base "><p class="profile-title ">First Name</p>
+                    <p class="profile-title-info">{% if user.first_name %}
+                        {{ user.first_name }}{% else %}Empty{% endif %}</p>
+                </div>
+                <div class="profile-title-base "><p class="profile-title ">Last Name</p>
+                    <p class="profile-title-info">{% if user.last_name %}
+                        {{ user.last_name }}{% else %}Empty{% endif %}</p>
+                </div>
+                <div class="profile-title-base "><p class="profile-title ">Username or Email</p>
+                    <p class="profile-title-info">{% if user.un %}
+                        {{ user.un }}{% else %}Empty{% endif %}</p>
+                </div>
+                <div class="profile-title-base"><p class="profile-title unselectable">Bio</p>
+                    <text class="profile-title-info">{% if user.bio %}
+                        {{ user.bio }}{% else %}Empty{% endif %}</text>
+                </div>
+
+
+            </div>
+        </section>
+
+    </div>
+    {% if posts %}
+        <div class="py-3 my-auto mx-3">
+            <section id="fullScreenProfile" class="container py-2 mx-auto profile-card-main shadow"
+                     style="max-width: 800px">
+                <h4 class="pt-3 mx-auto">User posts:</h4>
+                {% for post in posts %}
+                    <div id="post-card-{{post.id}}">
+                        <div class="post-profile shadow d-flex justify-content-between position-relative">
+                            {% if post.author == request.user %}
+                                <div class='post-delete shadow' onclick="deleteComPost('post', {{post.id}})"><i class=" fa-solid fa-xmark"></i></div>
+                            {% endif %}
+                            <p class="text-start" style="max-width: 75%">
+                                <a href="{% url 'post' pk=post.id %}">{{ post.title }}</a></p>
+                            <div class="row">
+                                <p class="col-5">Rating: </p>
+                                <p class="text-end col-7 {% if post.total_likes > 0 %}ratingG
+                                                        {% elif post.total_likes == 0 %}
+                                                        {% else %}ratingR{% endif %}">{{ post.total_likes }}</p>
+                            </div>
+                        </div>
+
+                    </div>
+                {% endfor %}
+            </section>
+        </div>
+        {% if paginator.count > pn %}
+            <div class="text-center">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+
+
+                        {% if posts.has_previous %}
+                            <li class="page-item"><a class="page-link mainBlue-text"
+                                                     href="?page=1{% if sort %}&sortby={{ sort }}{% endif %}"
+                                                     tabindex="-1">&laquo; First</a></li>
+                            <li class="page-item"><a class="page-link mainBlue-text"
+                                                     href="?page=
+                                                             {{ posts.previous_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}">{{ posts.previous_page_number }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><a class="page-link"
+                                                              href=""
+                                                              tabindex="-1"
+                                                              aria-disabled="true">&laquo; First</a></li>
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link my-active" style="color: wheat;" href="?page=
+                                    {{ posts.number }}{% if sort %}&sortby={{ sort }}{% endif %}">{{ posts.number }}</a>
+                        </li>
+
+                        {% if posts.has_next %}
+                            <li class="page-item">
+                                <a class="page-link mainBlue-text"
+                                   href="?page={{ posts.next_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}">
+                                    {{ posts.next_page_number }}</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link mainBlue-text"
+                                   href="?page={{ paginator.num_pages }}{% if sort %}&sortby={{ sort }}{% endif %}">Last
+                                    &raquo;</a>
+                            </li>
+
+
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link mainBlue-text" aria-disabled="true" href="">Last &raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}

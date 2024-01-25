@@ -1,0 +1,153 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <section>
+            <div class="container py-2 mx-auto">
+
+                <img alt="titleImage" class="rounded img-fluid shadow w-100 fit-cover"
+                     src="{% static 'media/empty_body.jpg' %}" style="height: 500px;">
+
+
+                <div class="comment-main mx-auto">
+                    <div class="mb-3 mt-3">
+                        <label for="imageInput" class="form-label">Image</label>
+                        <input class="form-control" type="file" id="imageInput" name="postImage" required>
+                    </div>
+                    <div class="mb-3">
+
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="postTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="postBody" class="form-label">Body</label>
+                        <textarea class="form-control" id="postBody" rows="3" name="postBody" required></textarea>
+                    </div>
+                    <label for="postTags" class="form-label">Tags</label>
+                    <div class="mb-3 d-flex">
+                        <div class="w-75">
+                            <input type="text" class="form-control" id="postTags" name="postTags" maxlength="15">
+                        </div>
+                        <div class="ms-3 w-25">
+                            <button class="btn shadow w-100 my-auto mx-auto" id="addTagButton"
+                                    style="background-color: #0A91AB; color: wheat; border: none; border-radius: 15px">
+                                Add
+                            </button>
+                        </div>
+
+                    </div>
+                    <p id="errorMessage" class="error-message">{% if messages %} {% for message in messages %} <p style="color: red;">{{message}}</p> {% endfor %} {% endif %}</p>
+                    <div id="tagContainer"></div>
+                    <button type="submit" class="btn shadow w-100 mt-2"
+                            style="background-color: #0A91AB; color: wheat; border: none; border-radius: 15px">Send
+                    </button>
+                </div>
+            </div>
+        </section>
+    </form>
+    {#    <section class="py-1">#}
+    {#        <div class="container py-2 mx-auto">#}
+    {#            <img class="rounded img-fluid shadow w-100 fit-cover"#}
+    {#                 src="{{ post.postImage.url }}"#}
+    {#                 style="height: 500px;">#}
+    {#            <div class="row  mx-auto py-2" style="max-width: 900px;">#}
+    {#                <div class="py-2">#}
+    {#                    <div class="text-center">#}
+    {#                        {% for tag in post.tagList.all %}#}
+    {#                            <a href="#" class=""><span class="badge tag mx-1 my-1">{{ tag }}</span></a>#}
+    {#                        {% endfor %}#}
+    {#                    </div>#}
+    {#                    <h4 class="fw-bold" style="margin-bottom: 5px">{{ post.title }}</h4>#}
+    {#                    <p class="text-muted">{{ post.body }}</p>#}
+    {#                    <div class="d-flex">#}
+    {#                        <div class="col-9 text-start">#}
+    {#                            <p class="user-field"><a#}
+    {#                                    href="{% url 'user_profile' pk=post.author.id %}">{{ post.author.un }}</a></p>#}
+    {#                        </div>#}
+    {#                        <!-- Rating -->#}
+    {#                        <div class="col-3">#}
+    {#                            <div class="d-flex">#}
+    {##}
+    {#                                <div class="col-7 text-start">#}
+    {#                                    <small class="">Rating: </small>#}
+    {#                                </div>#}
+    {#                                <div class="col-5 text-center">#}
+    {#                                            <small style="font-size: 12px">{{ post.total_likes }}</small>#}
+    {#                                    <a href="{% url 'post_like' pk=post.id method='like' %}"><i#}
+    {#                                            class="fa-solid fa-thumbs-up mx-2 {% if request.user in post.likes.all %}ratingG-1{% endif %}"></i></a>#}
+    {#                                    <small style="font-size: 12px"#}
+    {#                                           class="{% if post.total_likes > 0 %}ratingG#}
+    {#                                                        {% elif post.total_likes == 0 %}#}
+    {#                                                        {% else %}ratingR{% endif %} ">{{ post.total_likes }}</small>#}
+    {#                                    <a href="{% url 'post_like' pk=post.id method='dislike' %}"><i#}
+    {#                                            class="fa-solid fa-thumbs-down mx-2 {% if request.user in post.dislikes.all %}ratingR-1{% endif %}"></i></a>#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </section>#}
+    {#    <section class="mx-auto comment-main" style="max-width: 750px;">#}
+    {#        {% if request.user.is_authenticated %}#}
+    {#            <div class="mb-3 mx-auto ">#}
+    {#                <form action="" method="POST">#}
+    {#                    {% csrf_token %}#}
+    {#                    <label for="commentForm" class="form-label">Write your comment here!</label>#}
+    {#                    <textarea class="form-control shadow" id="commentForm" rows="3" name="messageBody"></textarea>#}
+    {#                    <button type="submit" class="btn shadow w-100 mt-2"#}
+    {#                            style="border-radius: 10px;background-color: #0A91AB; color: wheat">Send#}
+    {#                    </button>#}
+    {#                </form>#}
+    {#            </div>#}
+    {#        {% endif %}#}
+    {#        <div class="mb-3 mx-auto">#}
+    {#            <div class="comment-section">#}
+    {#                {% for comment in comments %}#}
+    {#                    <div class="comment card mb-4">#}
+    {#                        <div class="comment-content card-body shadow">#}
+    {#                            <div class="d-flex justify-content-between m-2">#}
+    {#                                <div class="ms-2 me-4 my-auto">#}
+    {#                                    <a href="{% url 'user_profile' pk=comment.commentAuthor.id %}">#}
+    {#                                        <img src="{{ comment.commentAuthor.avatar.url }}"#}
+    {#                                             alt="User Avatar" class="rounded-circle me-3" width="50" height="50">#}
+    {#                                    </a>#}
+    {#                                    <a href="{% url 'user_profile' pk=comment.commentAuthor.id %}">#}
+    {#                                        <span class="align-top">{{ comment.commentAuthor.un }}</span></a>#}
+    {#                                </div>#}
+    {##}
+    {#                                <span class="text-end align-top me-2">{{ comment.created }}</span>#}
+    {#                            </div>#}
+    {#                            <div class="d-flex mt-4">#}
+    {##}
+    {#                                <p class="card-text  ms-1 me-1">{{ comment.commentBody }}</p>#}
+    {#                            </div>#}
+    {#                            <div class="text-end">#}
+    {#                                <a href="{% url 'comment_like' pk=comment.id method='like' %}"><i#}
+    {#                                        class="fas fa-thumbs-up mx-2 {% if request.user in comment.likes.all %}ratingG-1{% endif %}"></i></a>#}
+    {##}
+    {##}
+    {#                                <small style="font-size: 12px" class="{% if comment.total_likes > 0 %}ratingG#}
+    {#                    {% elif comment.total_likes == 0 %}{% else %}ratingR{% endif %}">{{ comment.total_likes }}</small>#}
+    {#                                <a href="{% url 'comment_like' pk=comment.id method='dislike' %}"><i#}
+    {#                                        class="fas fa-thumbs-down mx-2 {% if request.user in comment.dislikes.all %}ratingR-1{% endif %}"></i></a>#}
+    {#                            </div>#}
+    {#                        </div>#}
+    {##}
+    {##}
+    {#                    </div>#}
+    {#                {% endfor %}#}
+    {##}
+    {##}
+    {#            </div>#}
+    {##}
+    {##}
+    {#        </div>#}
+    {##}
+    {#    </section>#}
+    <script src="{% static 'assets/js/myjs.js' %}"></script>
+{% endblock %}

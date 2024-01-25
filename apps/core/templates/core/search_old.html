@@ -1,0 +1,395 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+    <div style="position: relative;" class="mx-auto">
+        <div class="search-panel mx-auto">
+            <div class="container">
+                <div class="px-2" id="searchNavBtn">
+                    <div class="m-btn px-1">
+                        <p>Something</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="py-1">
+            <div class="container py-2 mx-auto">
+                <div class="mx-auto px-2 " style="max-width: 900px;">
+                    <button class="m-btn" type="submit"><i class="fa-solid fa-bars fa-lg my-3"></i></button>
+                </div>
+                <div class="search-panel mx-2 my-2" style="max-width: 900px;">
+                    <div class="m-2 p-2">
+                        <text style="font-weight: bold">Something</text>
+                        <div class="d-flex">
+                            <div class="col-6 justify-content-center">
+                                <div class="mx-auto">
+                                    <input type="checkbox" id="s1">
+                                    <label for="s1">Something</label>
+                                </div>
+                            </div>
+                            <div class="col-6 justify-content-center">
+                                <div class="mx-auto">
+                                    <input type="checkbox" id="s2">
+                                    <label for="s2" class="ps-2">Something</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--  -->
+                </div>
+            </div>
+        </section>
+        <section class="py-1">
+            <div class="container py-2 mx-auto">
+                <div class="mx-auto px-2 " style="max-width: 900px;">
+                    <label for="search" class="px-1 my-auto">Search</label><br>
+                    <input type="text" id="search" class="form-control">
+
+                </div>
+                <div class="d-flex justify-content-between mx-auto px-2 align-items-center" style="max-width: 900px;">
+                    {#<div class="my-auto"><a class="px-1" href="#">Blogs</a></div>#}
+
+                    <p class="px-1 my-auto">Blogs</p>
+                    <div>
+                        <div class="dropdown py-2">
+                            <button class="dropdown-toggle pt-1 px-3" style="border: none; border-radius: 20px"
+                                    aria-expanded="false" data-bs-toggle="dropdown" type="button">Sort By
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="?sortby=-created">Newest First</a>
+                                <a class="dropdown-item" href="?sortby=created">Oldest First</a>
+                                <a class="dropdown-item" href="?sortby=-rating">Highest Rating First</a>
+                                <a class="dropdown-item" href="?sortby=rating">Lowest Rating First</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-md-2 mx-auto py-2" style="max-width: 900px;">
+                    {% for post in posts %}
+                        <div class="col mb-4">
+
+                            <div>
+                                <a href="{% url 'post' pk=post.id %}"><img
+                                        class="rounded img-fluid shadow w-100 fit-cover"
+                                        src="{{ post.postImage.url }}"
+                                        style="height: 250px;"></a>
+
+                                <div class="py-2">
+                                    <div class="text-center">
+                                        {% for tag in post.tagList.all %}
+                                            <a href="{% url 'search' %}?{{ tag }}" class=""><span
+                                                    class="badge tag mx-1 my-1">{{ tag }}</span></a>
+                                        {% endfor %}
+                                    </div>
+
+                                    <a href="{% url 'post' pk=post.id %}">
+                                        <h4 class="fw-bold" style="margin-bottom: 5px">{{ post.title }}</h4>
+                                    </a>
+
+                                    <p class="text-muted post-body">
+                                        {{ post.body }}</p>
+                                    <div class="d-flex">
+                                        <div class="col-9 text-start">
+                                            <text class="pointer-my"
+                                                  onclick="fetch_id({{ post.author.id }})">{{ post.author.un }}</text>
+
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="d-flex">
+                                                <div class="col-7 text-start">
+                                                    <small class="">Rating: </small>
+                                                </div>
+                                                <div class="col-5 text-center">
+                                                    {#                                            <small style="font-size: 12px">{{ post.total_likes }}</small>#}
+                                                    <small style="font-size: 12px"
+                                                           class="{% if post.total_likes > 0 %}ratingG
+                                                        {% elif post.total_likes == 0 %}
+                                                        {% else %}ratingR{% endif %} ">{{ post.total_likes }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if paginator.count > pn %}
+                    <div class="text-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+
+
+                                {% if posts.has_previous %}
+                                    <li class="page-item"><a class="page-link mainBlue-text"
+                                                             href="?page=1{% if sort %}&sortby={{ sort }}{% endif %}"
+                                                             tabindex="-1">&laquo; First</a></li>
+                                    <li class="page-item"><a class="page-link mainBlue-text"
+                                                             href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                     {{ posts.previous_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}">{{ posts.previous_page_number }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><a class="page-link"
+                                                                      href=""
+                                                                      tabindex="-1"
+                                                                      aria-disabled="true">&laquo; First</a></li>
+                                {% endif %}
+                                <li class="page-item">
+                                    <a class="page-link my-active" style="color: wheat;" href="?page=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                            {{ posts.number }}{% if sort %}&sortby={{ sort }}{% endif %}">{{ posts.number }}</a>
+                                </li>
+
+                                {% if posts.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link mainBlue-text"
+                                           href="?page=
+                                               {{ posts.next_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}">
+                                            {{ posts.next_page_number }}</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link mainBlue-text"
+                                           href="?page=
+                                                   {{ paginator.num_pages }}{% if sort %}&sortby={{ sort }}{% endif %}">Last
+                                            &raquo;</a>
+                                    </li>
+
+
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link mainBlue-text" aria-disabled="true" href="">Last &raquo;</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+    </div>
+{% endblock %}

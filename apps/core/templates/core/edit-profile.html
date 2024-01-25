@@ -1,0 +1,82 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/4.0.2/autosize.min.js"></script>
+
+
+    <form action="" class="py-3 my-auto mx-3" enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+
+        <section id="fullScreenProfile" class="container py-2 mx-auto profile-card-main shadow ">
+            <div class="header-main main-col">
+                <img src="{{ user.avatar.url }}" alt="" class="img-fluid mb-3 unselectable">
+                <div class="mb-1 ms-3 me-3">
+                    <input class="form-control form-control-sm" id="formFileSm" type="file" name="avatar">
+                </div>
+                <button type="submit" class="profile-btn mt-2">Save</button>
+                {% if messages %}
+                    {% for message in messages %}
+                        <p class="error-message">{{ message }}</p>
+                    {% endfor %}
+
+                {% endif %}
+
+            </div>
+            <div class="row ps-3 pe-3 second-col mx-3">
+                <div class="position-relative ps-0 pe-0">
+                    <label for="first_name" class="profile-title-label ">First Name</label>
+                    <input id="first_name" type="text" name="first_name" value="{{ request.user.first_name }}"
+                           class="profile-input">
+                </div>
+                <div class="position-relative ps-0 pe-0">
+                    <label for="last_name" class="profile-title-label">Last Name</label>
+                    <input id="last_name" type="text" name="last_name" value="{{ request.user.last_name }}"
+                           class="profile-input">
+                </div>
+                <div class="position-relative ps-0 pe-0">
+                    <label for="email" class="profile-title-label">Email</label>
+                    <input id="email" type="text" name="email" value="{{ request.user.email }}"
+                           class="profile-input">
+                </div>
+                <div class="position-relative ps-0 pe-0">
+                    <label for="username" class="profile-title-label">Username</label>
+                    <input maxlength="50" id="username" type="text" name="username" value="{% if request.user.username  %}{{ request.user.username }}{% endif %}"
+                           class="profile-input">
+                </div>
+                <div class="position-relative ps-0 pe-0">
+                    <label for="instagram_url" class="profile-title-label">Instagram Url</label>
+                    <input id="instagram_url" type="text" name="instagram_url"
+                           value="{{ request.user.inst_url }}"
+                           class="profile-input">
+                </div>
+                <div class="position-relative ps-0 pe-0">
+                    <label for="steam_url" class="profile-title-label">Steam Url</label>
+                    <input id="steam_url" type="text" name="steam_url" value="{{ request.user.steam_url }}"
+                           class="profile-input">
+                </div>
+                <div class="position-relative ps-0 pe-0">
+                    <label for="telegram_url" class="profile-title-label">Telegram Url</label>
+                    <input id="telegram_url" type="text" name="telegram_url"
+                           value="{{ request.user.telegram_url }}"
+                           class="profile-input">
+                </div>
+                <div class="position-relative ps-0 pe-0">
+                    <label for="body" class="profile-title-label">Bio</label>
+                    <textarea name="body" id="body"
+                              class="profile-input-1 profile-input-222">{{ request.user.bio }}</textarea>
+                </div>
+
+
+            </div>
+        </section>
+
+
+    </form>
+
+
+    <script>
+        autosize(document.querySelector('.profile-input-222'));
+    </script>
+
+{% endblock %}
