@@ -71,8 +71,8 @@
                 <div class="d-flex justify-content-between mx-auto px-2 align-items-center" style="max-width: 900px;">
                     {#<div class="my-auto"><a class="px-1" href="#">Blogs</a></div>#}
 
-                    <p class="px-1 my-auto">Total found: {{paginator.count}}</p>
-                    
+                    <p class="px-1 my-auto">Total found: {{ paginator.count }}</p>
+
                 </div>
                 <div class="row row-cols-1 row-cols-md-2 mx-auto py-2" style="max-width: 900px;">
                     {% for post in posts %}
@@ -80,10 +80,10 @@
 
                             <div>
                                 <a href="{% url 'post' pk=post.id %}"><img
-                                        class="rounded img-fluid shadow w-100 fit-cover"
+                                        class="rounded img-fluid shadow w-100 fit-cover post-search"
                                         src="{{ post.postImage.url }}" style="height: 250px;"></a>
 
-                                <div class="py-2">
+                                <div class="py-2 post-search">
                                     <div class="text-center">
                                         {% for tag in post.tagList.all %}
                                             <a href="{% url 'search' %}?tags={{ tag }}" class=""><span
@@ -131,11 +131,13 @@
 
                                 {% if posts.has_previous %}
                                     <li class="page-item"><a class="page-link mainBlue-text"
-                                                             href="?page=1{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}"
+                                                             href="?page=1{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{ abn }}{% endif %}{% if tag_q %}&tags={{ tag_q }}{% endif %}"
                                                              tabindex="-1">&laquo; First</a>
                                     </li>
                                     <li class="page-item"><a class="page-link mainBlue-text"
-                                                             href="?page={{ posts.previous_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">
+                                                             href="?page=
+
+                                                                     {{ posts.previous_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{ abn }}{% endif %}{% if tag_q %}&tags={{ tag_q }}{% endif %}">
                                         {{ posts.previous_page_number }}</a>
                                     </li>
                                 {% else %}
@@ -144,17 +146,23 @@
                                 {% endif %}
                                 <li class="page-item">
                                     <a class="page-link my-active" style="color: wheat;"
-                                       href="?page={{ posts.number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">{{ posts.number }}</a>
+                                       href="?page=
+
+                                               {{ posts.number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{ abn }}{% endif %}{% if tag_q %}&tags={{ tag_q }}{% endif %}">{{ posts.number }}</a>
                                 </li>
 
                                 {% if posts.has_next %}
                                     <li class="page-item">
-                                        <a class="page-link mainBlue-text" href="?page={{ posts.next_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">
+                                        <a class="page-link mainBlue-text" href="?page=
+
+                                                {{ posts.next_page_number }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{ abn }}{% endif %}{% if tag_q %}&tags={{ tag_q }}{% endif %}">
                                             {{ posts.next_page_number }}</a>
                                     </li>
                                     <li class="page-item">
                                         <a class="page-link mainBlue-text"
-                                           href="?page={{ paginator.num_pages }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{abn}}{% endif %}{% if tag_q %}&tags={{tag_q}}{% endif %}">Last
+                                           href="?page=
+
+                                                   {{ paginator.num_pages }}{% if sort %}&sortby={{ sort }}{% endif %}{% if abn %}&q={{ abn }}{% endif %}{% if tag_q %}&tags={{ tag_q }}{% endif %}">Last
                                             &raquo;</a>
                                     </li>
 
@@ -176,15 +184,15 @@
         var mainFormDiv = document.querySelector('.mainForm')
 
         function hide() {
-	    mainFormDiv.classList.toggle('closed');
-	    if (mainFormDiv.style.display === 'none') {
-            mainFormDiv.style.display = 'block'
-          } else {
-            setTimeout(function() {
-                mainFormDiv.style.display = 'none';
-              }, 210);
-          }
-    }
+            mainFormDiv.classList.toggle('closed');
+            if (mainFormDiv.style.display === 'none') {
+                mainFormDiv.style.display = 'block'
+            } else {
+                setTimeout(function () {
+                    mainFormDiv.style.display = 'none';
+                }, 210);
+            }
+        }
     </script>
     <script>
         var check1, check2;

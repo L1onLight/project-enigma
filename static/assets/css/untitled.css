@@ -215,8 +215,8 @@ a:hover {
     max-width: 300px;
     padding: calc(2 * var(--r) / 3);
     -webkit-mask: radial-gradient(var(--t) at var(--_d) 0, #0000 98%, #000 102%) var(--_d) 100%/calc(100% - var(--r)) var(--t) no-repeat,
-        conic-gradient(at var(--r) var(--r), #000 75%, #0000 0) calc(var(--r) / -2) calc(var(--r) / -2) padding-box,
-        radial-gradient(50% 50%, #000 98%, #0000 101%) 0 0/var(--r) var(--r) space padding-box;
+    conic-gradient(at var(--r) var(--r), #000 75%, #0000 0) calc(var(--r) / -2) calc(var(--r) / -2) padding-box,
+    radial-gradient(50% 50%, #000 98%, #0000 101%) 0 0/var(--r) var(--r) space padding-box;
     background: rgb(224, 224, 224);
     color: #000000;
 }
@@ -495,8 +495,7 @@ body {
 .nav-center {
     position: fixed;
     left: 50%;
-    transform: translate(-50%, 0);
-    ;
+    transform: translate(-50%, 0);;
 }
 
 .nav-end {
@@ -779,4 +778,8 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.post-search {
+    min-width: 350px;
 }
