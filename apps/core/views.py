@@ -69,7 +69,6 @@ def post_view(request, pk):
 
 def search(request):
     all_posts = Post.objects.all()
-    print(request.build_absolute_uri())
     if request.GET.get('sortby'):
         all_posts = all_posts.annotate(likes_count=Count('likes', distinct=True),
                                        dislikes_count=Count('dislikes', distinct=True)).annotate(
@@ -133,7 +132,6 @@ def user_profile(request, pk):
         pn = 5
         user = CustomUser.objects.get(pk=pk)
         posts = Post.objects.filter(author=user)
-        print(posts)
         p = Paginator(posts, pn)
         page = request.GET.get('page')
         posts = p.get_page(page)
@@ -196,54 +194,54 @@ def edit_profile(request):
     return render(request, 'core/edit-profile.html')
 
 
-def post_like(request, pk, method):
-    if not request.user.is_authenticated:
-        return HttpResponse('/login/')
+# def post_like(request, pk, method):
+#     if not request.user.is_authenticated:
+#         return HttpResponse('/login/')
+#
+#     post = Post.objects.get(pk=pk)
+#     if method == 'like':
+#         if post.dislikes.all().filter(email=request.user.email):
+#             post.dislikes.remove(request.user)
+#         if post.likes.all().filter(email=request.user.email):
+#             post.likes.remove(request.user)
+#         else:
+#             post.likes.add(request.user)
+#         post.save()
+#         response = f"ratingG-1|{post.total_likes()}"
+#         return HttpResponse(response)
+#     elif method == 'dislike':
+#         if post.likes.all().filter(email=request.user.email):
+#             post.likes.remove(request.user)
+#         if post.dislikes.all().filter(email=request.user.email):
+#             post.dislikes.remove(request.user)
+#         else:
+#             post.dislikes.add(request.user)
+#         post.save()
+#         response = f"ratingR-1|{post.total_likes()}"
+#         return HttpResponse(response)
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    post = Post.objects.get(pk=pk)
-    if method == 'like':
-        if post.dislikes.all().filter(email=request.user.email):
-            post.dislikes.remove(request.user)
-        if post.likes.all().filter(email=request.user.email):
-            post.likes.remove(request.user)
-        else:
-            post.likes.add(request.user)
-        post.save()
-        response = f"ratingG-1|{post.total_likes()}"
-        return HttpResponse(response)
-    elif method == 'dislike':
-        if post.likes.all().filter(email=request.user.email):
-            post.likes.remove(request.user)
-        if post.dislikes.all().filter(email=request.user.email):
-            post.dislikes.remove(request.user)
-        else:
-            post.dislikes.add(request.user)
-        post.save()
-        response = f"ratingR-1|{post.total_likes()}"
-        return HttpResponse(response)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
-@login_required_my
-def comment_like(request, pk, method):
-    comment = Comment.objects.get(pk=pk)
-    if method == 'like':
-        if comment.dislikes.all().filter(email=request.user.email):
-            comment.dislikes.remove(request.user)
-        if comment.likes.all().filter(email=request.user.email):
-            comment.likes.remove(request.user)
-        else:
-            comment.likes.add(request.user)
-        comment.save()
-    elif method == 'dislike':
-        if comment.likes.all().filter(email=request.user.email):
-            comment.likes.remove(request.user)
-        if comment.dislikes.all().filter(email=request.user.email):
-            comment.dislikes.remove(request.user)
-        else:
-            comment.dislikes.add(request.user)
-        comment.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+# @login_required_my
+# def comment_like(request, pk, method):
+#     comment = Comment.objects.get(pk=pk)
+#     if method == 'like':
+#         if comment.dislikes.all().filter(email=request.user.email):
+#             comment.dislikes.remove(request.user)
+#         if comment.likes.all().filter(email=request.user.email):
+#             comment.likes.remove(request.user)
+#         else:
+#             comment.likes.add(request.user)
+#         comment.save()
+#     elif method == 'dislike':
+#         if comment.likes.all().filter(email=request.user.email):
+#             comment.likes.remove(request.user)
+#         if comment.dislikes.all().filter(email=request.user.email):
+#             comment.dislikes.remove(request.user)
+#         else:
+#             comment.dislikes.add(request.user)
+#         comment.save()
+#     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def log_out(request):
@@ -288,10 +286,8 @@ def restore_password(request):
                 pr.restoreCode = code
                 pr.save()
             except Exception as e:
-                print(e)
                 pr = PasswordRestore(user=user, restoreCode=code)
                 pr.save()
-            print(f"Code: {code}")
             password_restore_email(
                 request, receiver_email=email_, code=code, url=request.build_absolute_uri('?code'))
 
@@ -335,7 +331,7 @@ def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
-            user_exist_or_not = CustomUser.objects.get(email=email)
+            _user_exist_or_not = CustomUser.objects.get(email=email)
             messages.error(request, 'User already exists.')
         except CustomUser.DoesNotExist:
             password = make_password(request.POST.get('password'))

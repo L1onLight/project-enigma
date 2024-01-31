@@ -12,7 +12,6 @@ class Post(models.Model):
     tagList = models.ManyToManyField("Tag", blank=True)
     postImage = models.ImageField(null=True, default="empty_body.jpg")
     addedToFav = models.ManyToManyField(CustomUser, blank=True, related_name='addedToFav')
-    comments = models.ManyToManyField("Comment", blank=True)
     likes = models.ManyToManyField(CustomUser, related_name='liked_post')
     dislikes = models.ManyToManyField(CustomUser, related_name='disliked_post')
 
@@ -32,10 +31,16 @@ class Post(models.Model):
     def total_likes(self):
         return self.likes.all().count() - self.dislikes.all().count()
 
+    def tags_list(self):
+        return [tag.tagTitle for tag in self.tagList.all()]
+
     def clean_tags(self):
         if self.tagList.count() > 4:
             raise ValidationError("You can select a maximum of 4 tags.")
         return True
+
+    def author_name(self):
+        return self.author.un()
 
 
 class Tag(models.Model):
@@ -46,7 +51,7 @@ class Tag(models.Model):
 
 
 class Comment(models.Model):
-    toPost = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    toPost = models.ForeignKey(Post, on_delete=models.CASCADE, null=False)
     commentAuthor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     commentBody = models.TextField()
     likes = models.ManyToManyField(CustomUser, related_name='liked_comment')
@@ -62,3 +67,12 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.commentAuthor}: {self.commentBody[:50]}"
+
+    def get_or_none(self, *args, **kwargs):
+        try:
+            return self.objects.get(*args, **kwargs)
+        except self.DoesNotExist:
+            return None
+
+    def author_name(self):
+        return self.commentAuthor.un()

@@ -47,8 +47,13 @@ INSTALLED_APPS = [
     'apps.posts',
     'apps.core.templatetags.custom_filters',
     'apps.api',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework.authtoken',
+    'drf_spectacular',
+
 ]
+if DEBUG:
+    INSTALLED_APPS.append("django_extensions")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -140,11 +145,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# with open("J:\Docs\Docs\google_smtp.json") as f:
-#     j = json.load(f)
-#     email = j['email']
-#     password = j['password']
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10
 
+}
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUEST': True
+}
 # Default values for email and password
 EMAIL_SYSTEM_DEFAULTS = {
     'EMAIL': 'example@example.com',

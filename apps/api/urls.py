@@ -1,15 +1,19 @@
-from django.urls import path
+from django.urls import path, include
+
 from . import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register("posts", views.PostViewSet)
+router.register("tags", views.TagsViewSet)
+router.register("comments", views.CommentViewSet)
+router.register("token", views.TokenViewSet, basename="token")
+router.register("user", views.UserViewSet, basename="user")
+# print(router.urls)
+app_name = "api"
 
 urlpatterns = [
-    path('', views.get_routes),
-    path('posts/', views.posts),
-    path('post/<str:pk>', views.post),
-    path('users/', views.users),
-    path('user/<str:pk>', views.user),
-    path('like-post/<str:pk>/<method>', views.post_like),
-    path('like-comment/<str:pk>/<method>', views.comment_like),
-    path('delete-comment/<str:pk>/', views.delete_comment),
-    path('delete-post/<str:pk>/', views.delete_post),
+    path('', include(router.urls)),
+    path('rating/', views.rating),
 
 ]

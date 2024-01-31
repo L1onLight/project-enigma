@@ -1,3 +1,29 @@
+const COMMENT_URL = "/api/comments"
+const POST_URL = "/api/posts"
+const RATING_URL = "/api/rating/"
+
+function getCsrfToken() {
+    // Retrieve the CSRF token from a cookie
+    const cookieValue = document.cookie.match(/csrftoken=([^;]+)/);
+    return cookieValue ? cookieValue[1] : '';
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 if (window.location.pathname === "/create-post/") {
     window.addEventListener("DOMContentLoaded", function () {
         var imageInput = document.getElementById("imageInput");
@@ -169,6 +195,7 @@ function fetch_id(userId) {
     function fetch_id(userId, event) {
         event.preventDefault();
     }
+
     fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
@@ -179,17 +206,22 @@ function fetch_id(userId) {
         });
 }
 
-function like_post(button, postId, method, type) {
-    if (type === "post") {
-        var url = `/api/like-post/${postId}/${method}`;
-    } else if (type === "comment") {
-        var url = `/api/like-comment/${postId}/${method}`;
-    }
-    var rating = document.getElementById(`${type}-${postId}`);
-    fetch(url, {
+function like_post(button, postId, method, _type) {
+
+    const rating = document.getElementById(`${_type}-${postId}`);
+    fetch(RATING_URL, {
+        method: "POST",
         headers: {
-            "Content-Type": "application/json",
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            "X-CSRFToken": getCsrfToken(),
+
         },
+        body: JSON.stringify({
+            "pk": postId,
+            "method": method,
+            "type": _type,
+        })
     })
         .then((response) => {
             if (response.status === 401) {
@@ -203,18 +235,14 @@ function like_post(button, postId, method, type) {
             }
         })
         .then((responseContent) => {
-            const items = responseContent.split("|");
+            const items = JSON.parse(responseContent);
             if (responseContent === "/login/") {
                 window.location.replace("/login/");
                 return;
             }
-
-            const className = items[0]; // Get the first item (e.g., 'ratingG-1')
-            const tl = items[1]; // Get the second item (total likes count)
-
-            // Use className and tl as needed
-            // console.log('Class Name:', className);
-            // console.log('Total Likes:', tl);
+            console.log()
+            const tl = items["total_likes"];
+            console.log("TOTAL_LIKES:", tl)
             if (method === "like") {
                 dislikeB = button.nextElementSibling.nextElementSibling;
                 if (dislikeB.classList.contains("ratingR-1")) {
@@ -226,10 +254,16 @@ function like_post(button, postId, method, type) {
                     likeB.classList.remove("ratingG-1");
                 }
             }
-
-            button.classList.toggle(className);
+            console.log(1, button)
+            if (method === "dislike") {
+                button.classList.toggle("ratingR-1")
+            } else if (method === "like") {
+                button.classList.toggle("ratingG-1")
+            }
+            // button.classList.toggle(className);
             rating.innerHTML = tl;
-            num = +tl;
+            if (rating.innerText)
+                num = +tl;
             if (num === 0) {
                 rating.classList.remove("ratingG-1");
                 rating.classList.remove("ratingR-1");
@@ -247,49 +281,43 @@ function like_post(button, postId, method, type) {
 }
 
 function deleteComPost(type, id) {
+    let csrftoken = getCsrfToken();
+    console.log(csrftoken)
     confirmation = confirm(`Are you want do delete this ${type}?`);
 
     if (confirmation && type === "comment") {
-        var url = `/api/delete-comment/${id}/`;
+        let url = `${COMMENT_URL}/${id}/`;
         fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-            },
+            method: "DELETE",
+            headers: {"X-CSRFToken": csrftoken,},
         })
             .then((response) => {
                 if (response.ok) {
-                    return response.text();
-                } else {
-                    throw new Error("Failed to like the post.");
-                }
-            })
-            .then((responseContent) => {
-                c = responseContent;
-                if (c === '"OK"') {
                     card = document.getElementById(`comment-card-${id}`);
                     card.remove();
+                    location.reload()
+                    return;
+                } else {
+                    throw new Error(`Failed to delete the post.`);
                 }
-            });
+            })
+
     } else if (confirmation && type === "post") {
-        var url = `/api/delete-post/${id}/`;
+        let url = `${POST_URL}/${id}/`;
         fetch(url, {
-            headers: {
-                "Content-Type": "application/json",
-            },
+            method: "DELETE",
+            headers: {"X-CSRFToken": csrftoken,},
         })
             .then((response) => {
                 if (response.ok) {
-                    return response.text();
-                } else {
-                    throw new Error("Failed to like the post.");
-                }
-            })
-            .then((responseContent) => {
-                c = responseContent;
-                if (c === '"OK"') {
                     card = document.getElementById(`post-card-${id}`);
                     card.remove();
+                    location.reload()
+                    return;
+                } else {
+                    throw new Error("Failed to delete the post.");
                 }
-            });
+            })
+
     }
 }
