@@ -23,6 +23,11 @@ created [password for specific app](https://support.google.com/accounts/answer/1
 pip install -r requirements.txt
 ```
 
+Migrate database
+```shell
+python manage.py migrate
+```
+
 And finally, run the server.
 
 ```shell
