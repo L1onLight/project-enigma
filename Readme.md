@@ -5,6 +5,7 @@ Django-based blog site
 ## Installation
 
 Create .env file in the root of the project where manage.py is located and set the following variables:
+
 (Without DJANGO_DEBUG=True static files will not be loaded)
 
 ```properties
