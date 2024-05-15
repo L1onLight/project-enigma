@@ -52,8 +52,6 @@ INSTALLED_APPS = [
     'drf_spectacular',
 
 ]
-if DEBUG:
-    INSTALLED_APPS.append("django_extensions")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -169,7 +167,8 @@ EMAIL_SYSTEM_DEFAULTS = {
 EMAIL_SYSTEM = getattr(settings, 'EMAIL_SYSTEM', EMAIL_SYSTEM_DEFAULTS)
 # Retrieve email and password from environment variables if set
 EMAIL_SYSTEM['EMAIL'] = os.getenv('EMAIL_SYSTEM_EMAIL', EMAIL_SYSTEM['EMAIL'])
-EMAIL_SYSTEM['PASSWORD'] = os.getenv('EMAIL_SYSTEM_PASSWORD', EMAIL_SYSTEM['PASSWORD'])
+EMAIL_SYSTEM['PASSWORD'] = os.getenv(
+    'EMAIL_SYSTEM_PASSWORD', EMAIL_SYSTEM['PASSWORD'])
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
