@@ -16,11 +16,28 @@ DJANGO_DEBUG=True
 ```
 
 These variables are optional, but EMAIL_SYSTEM_EMAIL and EMAIL_SYSTEM_PASSWORD is required for password restore
-functionality. Email system should work only for GMail with
+functionality. Email system would work only for GMail with
 created [password for specific app](https://support.google.com/accounts/answer/185833).
 
-### Install python requirements:
 
+### Use Makefile commands, or if you want to run manually:
+Copy .env.sample as .env:
+```shell
+cp .env.sample .env
+```
+
+Create python virtual environment:
+```shell
+python -m venv .venv
+```
+
+Activate python virtual environment:
+```shell
+source ./.venv/bin/activate
+```
+
+
+Install python requirements:
 ```shell
 pip install -r requirements.txt
 ```
@@ -31,7 +48,6 @@ python manage.py migrate
 ```
 
 And finally, run the server.
-
 ```shell
 python manage.py runserver
 ```
